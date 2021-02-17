@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,9 +15,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
+})->middleware('rolehome');
+
+Route::get('/register', function () {
+    return redirect('/');
 });
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+/* Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home'); */
+
+Route::get('/admin', [App\Http\Controllers\AdminController::class, 'index'])->name('admin')->middleware('isadmin');
+Route::get('/tech', [App\Http\Controllers\TechController::class, 'index'])->name('tech')->middleware('istech');
+Route::get('/user', [App\Http\Controllers\UserController::class, 'index'])->name('user')->middleware('isuser');
