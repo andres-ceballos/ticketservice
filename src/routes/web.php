@@ -18,14 +18,10 @@ Route::get('/', function () {
     return view('auth.login');
 })->middleware('rolehome');
 
-Route::get('/register', function () {
-    return redirect('/');
-});
-
-Auth::routes();
+Auth::routes(['register' => false]);
 
 /* Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home'); */
 
-Route::get('/admin', [App\Http\Controllers\AdminController::class, 'index'])->name('admin')->middleware('isadmin');
-Route::get('/tech', [App\Http\Controllers\TechController::class, 'index'])->name('tech')->middleware('istech');
-Route::get('/user', [App\Http\Controllers\UserController::class, 'index'])->name('user')->middleware('isuser');
+Route::resource('/admin', App\Http\Controllers\AdminController::class)->middleware('isadmin');
+Route::resource('/tech', App\Http\Controllers\TechController::class)->middleware('istech');
+Route::resource('/user', App\Http\Controllers\UserController::class)->middleware('isuser');

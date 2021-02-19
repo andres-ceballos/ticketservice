@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateUserRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -13,7 +16,14 @@ class AdminController extends Controller
      */
     public function index()
     {
-        return view('users.admin.index');
+        $users = DB::table('users')->orderBy('id', 'DESC')
+            ->join('roles', 'users.role_id', '=', 'roles.id')
+            ->select(
+                'users.*',
+                'roles.role_name'
+            )->get();
+
+        return view('users.admin.index', compact('users'));
     }
 
     /**
@@ -23,7 +33,7 @@ class AdminController extends Controller
      */
     public function create()
     {
-        //
+        return view('users.admin.create');
     }
 
     /**
@@ -32,9 +42,13 @@ class AdminController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateUserRequest $request)
     {
-        //
+        $user = $request->validated();
+
+        User::create($user);
+
+        return redirect()->to('/admin/create');
     }
 
     /**
@@ -68,7 +82,11 @@ class AdminController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        $user->update($request->all());
+
+        return redirect('/admin');
     }
 
     /**
@@ -79,6 +97,10 @@ class AdminController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        $user->delete();
+
+        return redirect('/admin');
     }
 }

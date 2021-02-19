@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header text-center heavy-rain-gradient">{{ __('Recuperar contraseña vía correo electrónico') }}</div>
+                <div class="card-header text-center bg-light">{{ __('Recuperar contraseña vía correo electrónico') }}</div>
 
                 <div class="card-body">
                     @if (session('status'))
