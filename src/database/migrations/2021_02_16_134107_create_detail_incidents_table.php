@@ -15,11 +15,10 @@ class CreateDetailIncidentsTable extends Migration
     {
         Schema::create('detail_incidents', function (Blueprint $table) {
             $table->id();
-            $table->string('message');
-            $table->string('response')->nullable();
-            $table->foreignId('user_id')->references('id')->on('users');
-            $table->foreignId('tech_id')->nullable()->references('id')->on('users');
+            $table->longText('message_reply');
+            $table->foreignId('from_user_id')->references('id')->on('users');
             $table->foreignId('incident_id')->references('id')->on('incidents');
+            $table->timestamps();
         });
     }
 

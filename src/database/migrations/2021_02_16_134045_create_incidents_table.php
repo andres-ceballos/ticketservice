@@ -16,8 +16,10 @@ class CreateIncidentsTable extends Migration
         Schema::create('incidents', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('incident_status');
-            $table->string('service_rating');
+            $table->boolean('incident_status')->default(false);
+            $table->tinyInteger('service_rating')->default(0);
+            $table->foreignId('user_id')->references('id')->on('users');
+            $table->foreignId('tech_id')->nullable()->references('id')->on('users');
             $table->timestamps();
         });
     }

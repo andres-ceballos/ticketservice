@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateDetailIncidentRequest;
+use App\Models\DetailIncident;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class UserController extends Controller
+class DetailIncidentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,20 +17,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user_incidents = DB::table('incidents')->orderBy('detail_incidents.created_at', 'DESC')
-            ->join('detail_incidents', 'incidents.id', '=', 'detail_incidents.incident_id')
-            ->leftJoin('users', 'incidents.tech_id', '=', 'users.id')
-            ->where('incidents.user_id', "=", Auth::user()->id)
-            ->select(
-                'incidents.*',
-                'detail_incidents.incident_id',
-                'detail_incidents.message_reply',
-                DB::raw('CONCAT(users.firstname, " ", users.lastname) as tech_name')
-            )->get();
-
-        $user_incidents = $user_incidents->unique('incident_id');
-
-        return view('users.user.index', compact('user_incidents'));
+        //
     }
 
     /**
@@ -47,9 +36,20 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateDetailIncidentRequest $request)
     {
-        //
+        $detail_incident = $request->validated();
+
+        $detail_incident['from_user_id'] = Auth::user()->id;
+
+        $incident_id = url()->previous();
+        $url_delete = 'http://localhost:8000/detail-incident/';
+        $incident_id = str_replace($url_delete, '', $incident_id);
+        $detail_incident['incident_id'] = (int) $incident_id;
+
+        DetailIncident::create($detail_incident);
+
+        return back();
     }
 
     /**
@@ -60,7 +60,12 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+        $details_incident = DB::table('detail_incidents')
+            ->where('incident_id', $id)
+            ->select('detail_incidents.*')
+            ->get();
+
+        return view('users.user.show', compact('details_incident'));
     }
 
     /**
