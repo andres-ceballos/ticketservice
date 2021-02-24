@@ -88,7 +88,19 @@ class IncidentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        if ($request->action == 'update_tech_id') {
+            $incident = Incident::findOrFail($id);
+            $tech_id = Auth::user()->id;
+            $incident->update(['tech_id' => $tech_id]);
+
+            return redirect('detail-incident/' . $id);
+            //
+        } else if ($request->action == 'update_incident_status') {
+            $incident = Incident::findOrFail($id);
+            $incident->update(['incident_status' => 1]);
+
+            return redirect('/tech');
+        }
     }
 
     /**

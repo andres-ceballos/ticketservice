@@ -21,7 +21,7 @@
                             </div>
                             @else
                             <div class="d-block">
-                                <div class="d-block order-1 bg-dark text-white w-50 rounded-lg px-3 py-3">
+                                <div class="d-block order-1 bg-dark text-white w-50 rounded-lg px-3 py-3 my-2">
                                     <p class="m-0">{{ $detail_incident->message_reply }}</p>
                                 </div>
                             </div>
@@ -31,6 +31,7 @@
                     </div>
                 </div>
 
+                @if($detail_incident->incident_status == 0)
                 <div class="card-footer d-flex justify-content-center">
                     <form method="POST" action="{{route('detail-incident.store')}}" class="row w-75 d-flex justify-content-between">
                         @csrf
@@ -39,9 +40,14 @@
                         <button type="submit" class="btn btn-primary">{{ __('Enviar mensaje') }} </button>
                     </form>
                 </div>
+                @else
+                <div class="card-footer d-flex justify-content-center">
+                    <p>SOLICITUD CERRADA</p>
+                </div>
+                @endif
             </div>
             <div class="d-flex justify-content-end mt-3">
-                <a href="{{route('user.index')}}" class="btn btn-md btn-primary">Regresar</a>
+                <a href="{{route('tech.index')}}" class="btn btn-md btn-primary">Regresar</a>
             </div>
         </div>
     </div>

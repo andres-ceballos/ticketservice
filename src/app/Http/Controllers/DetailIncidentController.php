@@ -60,12 +60,17 @@ class DetailIncidentController extends Controller
      */
     public function show($id)
     {
+
         $details_incident = DB::table('detail_incidents')
+            ->join('incidents', 'detail_incidents.incident_id', '=', 'incidents.id')
             ->where('incident_id', $id)
-            ->select('detail_incidents.*')
+            ->select(
+                'detail_incidents.*',
+                'incidents.incident_status'
+            )
             ->get();
 
-        return view('users.user.show', compact('details_incident'));
+        return view('users.tech_user.show', compact('details_incident'));
     }
 
     /**

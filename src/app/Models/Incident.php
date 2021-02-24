@@ -9,5 +9,5 @@ class Incident extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'user_id'];
+    protected $fillable = ['title', 'incident_status', 'service_rating', 'user_id', 'tech_id'];
 }

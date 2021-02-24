@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class TechController extends Controller
 {
@@ -13,7 +15,22 @@ class TechController extends Controller
      */
     public function index()
     {
-        return view('users.tech.index');
+        $user_incidents = DB::table('incidents')->orderBy('incidents.created_at', 'DESC')
+            ->join('detail_incidents', 'incidents.id', '=', 'detail_incidents.incident_id')
+            ->leftJoin('users', 'incidents.user_id', '=', 'users.id')
+            ->select(
+                'incidents.*',
+                'detail_incidents.incident_id',
+                'detail_incidents.message_reply',
+                DB::raw('CONCAT(users.firstname, " ", users.lastname) as user_name')
+            )
+            ->where('incidents.tech_id', '=', Auth::user()->id)
+            ->orWhere('incidents.tech_id', '=', null)
+            ->get();
+
+        $user_incidents = $user_incidents->unique('incident_id');
+
+        return view('users.tech.index', compact('user_incidents'));
     }
 
     /**
