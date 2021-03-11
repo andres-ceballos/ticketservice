@@ -18,14 +18,14 @@ class TechController extends Controller
         $user_incidents = DB::table('incidents')->orderBy('incidents.created_at', 'DESC')
             ->join('detail_incidents', 'incidents.id', '=', 'detail_incidents.incident_id')
             ->leftJoin('users', 'incidents.user_id', '=', 'users.id')
+            ->where('incidents.tech_id', '=', Auth::user()->id)
+            ->orWhere('incidents.tech_id', '=', null)
             ->select(
                 'incidents.*',
                 'detail_incidents.incident_id',
                 'detail_incidents.message_reply',
                 DB::raw('CONCAT(users.firstname, " ", users.lastname) as user_name')
-            )
-            ->where('incidents.tech_id', '=', Auth::user()->id)
-            ->orWhere('incidents.tech_id', '=', null)
+            )->orderBy('detail_incidents.created_at', 'DESC')
             ->get();
 
         $user_incidents = $user_incidents->unique('incident_id');

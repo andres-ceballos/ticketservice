@@ -15,7 +15,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user_incidents = DB::table('incidents')->orderBy('detail_incidents.created_at', 'DESC')
+        $user_incidents = DB::table('incidents')->orderBy('incidents.created_at', 'DESC')
             ->join('detail_incidents', 'incidents.id', '=', 'detail_incidents.incident_id')
             ->leftJoin('users', 'incidents.tech_id', '=', 'users.id')
             ->where('incidents.user_id', "=", Auth::user()->id)
@@ -24,7 +24,8 @@ class UserController extends Controller
                 'detail_incidents.incident_id',
                 'detail_incidents.message_reply',
                 DB::raw('CONCAT(users.firstname, " ", users.lastname) as tech_name')
-            )->get();
+            )->orderBy('detail_incidents.created_at', 'DESC')
+            ->get();
 
         $user_incidents = $user_incidents->unique('incident_id');
 
