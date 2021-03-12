@@ -18,6 +18,8 @@ class CreateIncidentsTable extends Migration
             $table->string('title');
             $table->boolean('incident_status')->default(false);
             $table->tinyInteger('service_rating')->default(0);
+            $table->integer('notification_user')->nullable();
+            $table->integer('notification_tech')->nullable();
             $table->foreignId('user_id')->references('id')->on('users');
             $table->foreignId('tech_id')->nullable()->references('id')->on('users');
             $table->timestamps();
