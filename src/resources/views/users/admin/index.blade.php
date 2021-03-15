@@ -11,6 +11,9 @@
                     <table class="table table-striped table-bordered table-responsive-sm">
                         <thead class="thead-dark">
                             <tr class="text-center">
+                                <th class="align-middle" scope="col">
+                                    <input type="checkbox" id="select-all-checkbox">
+                                </th>
                                 <th class="align-middle" scope="col">#</th>
                                 <th class="align-middle" scope="col">Nombres</th>
                                 <th class="align-middle" scope="col">Apellidos</th>
@@ -25,7 +28,10 @@
                         <tbody>
                             @foreach($users as $user)
                             <tr class="text-center">
-                                <th class="align-middle" scope="row">{{ $user->id }}</th>
+                                <th class="align-middle" scope="row">
+                                    <input type="checkbox" class="checkbox-delete" data-id="{{$user->id}}">
+                                </th>
+                                <td class="align-middle">{{ $user->id }}</td>
                                 <td class="align-middle">{{ $user->firstname }}</td>
                                 <td class="align-middle">{{ $user->lastname }}</td>
                                 <td class="align-middle">{{ $user->email }}</td>
@@ -46,14 +52,19 @@
                         </tbody>
                     </table>
 
-                    <nav>
-                        <ul class="pagination justify-content-end">
-                            <li>
-                                {{ $users->links('pagination::bootstrap-4') }}
-                            </li>
-                        </ul>
-                    </nav>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <a href="#" class="btn btn-md btn-primary btn-all-delete" data-url="{{ url('deleteSelectUsers') }}">Eliminar seleccionados</a>
+                        </div>
 
+                        <nav>
+                            <ul class="pagination justify-content-end">
+                                <li>
+                                    {{ $users->links('pagination::bootstrap-4') }}
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                     @include('users.admin.edit')
                 </div>
             </div>

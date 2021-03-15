@@ -118,4 +118,11 @@ class AdminController extends Controller
 
         return redirect()->back()->with('success', 'Usuario eliminado correctamente');
     }
+
+    public function destroyAll(Request $request)
+    {
+        $ids = explode(',', $request->ids);
+        DB::table('users')->whereIn('id', $ids)->delete();
+        return response()->json(['success' => 'Usuarios eliminados correctamente']);
+    }
 }

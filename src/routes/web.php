@@ -23,6 +23,8 @@ Auth::routes(['register' => false]);
 /* Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home'); */
 
 Route::resource('/admin', App\Http\Controllers\AdminController::class)->middleware('isadmin');
+Route::delete('/deleteSelectUsers', [App\Http\Controllers\AdminController::class, 'destroyAll'])->middleware('isadmin');
+
 Route::resource('/tech', App\Http\Controllers\TechController::class)->middleware('istech');
 Route::resource('/user', App\Http\Controllers\UserController::class)->middleware('isuser');
 

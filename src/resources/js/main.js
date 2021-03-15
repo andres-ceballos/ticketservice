@@ -1,5 +1,4 @@
 $(document).ready(function () {
-
     //****************************************** GLOBAL
 
     //ALERT NOTIFICATIONS
@@ -27,6 +26,81 @@ $(document).ready(function () {
         modal.find('#email').val(user.email);
         modal.find('#phone_ext').val(user.phone_ext);
         modal.find('#role_id').val(user.role_id);
+    });
+
+    //MAIN CHECKBOX FOR SELECT OR DESELECTED ALL CHEXBOXES SECONDARIES
+    $('#select-all-checkbox').on('change', function () {
+        if ($(this).prop('checked')) {
+            $('.checkbox-delete').prop('checked', true);
+        } else {
+            $('.checkbox-delete').prop('checked', false);
+        }
+    });
+
+    //BUTTON FOR DELETE REGISTERS SELECTED
+    $('.btn-all-delete').on('click', function (e) {
+        e.preventDefault();
+
+        var checkbox_selected = [];
+
+        //SAVE ID CHECKBOXES SELECTED INTO ARRAY
+        $('.checkbox-delete:checked').each(function () {
+            checkbox_selected.push($(this).attr('data-id'));
+        });
+
+        if (checkbox_selected.length <= 0) {
+            alert('Debes seleccionar por lo menos un registro para esta acción');
+            //
+            //IF SELECTED AT LEAST 1 ROW...
+        } else {
+            var confirmation_delete = confirm('¿Estás seguro de eliminar los registros seleccionados?');
+
+            if (confirmation_delete == true) {
+                //SEPARETE BY ',' ALL IDs IN THE ARRAY
+                //TO BE PROCESSED IN THE DESTROY-ALL CONTROLLER METHOD
+                var join_checkbox_selected = checkbox_selected.join(',');
+
+                //console.log(join_checkbox_selected);
+                //DELETE SELECT CHECKBOXES
+                $.ajax({
+                    headers: { 'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content") },
+                    type: 'DELETE',
+                    url: $(this).data('url'),
+                    data: 'ids=' + join_checkbox_selected,
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.success) {
+                            //DELETE ROW IN VIEW FOR REGISTERS DESTROY
+                            $('.checkbox-delete:checked').each(function () {
+                                $(this).parents('tr').remove();
+                            });
+
+                            //ADD NOTIFICATION
+                            $('.main-container').prepend(
+                                '<div class="container position-relative d-flex flex-row-reverse">' +
+                                '<div style="z-index: 1;" class="notification-alert alert alert-success position-absolute m-0 mt-1 col-md-4">' +
+                                '<p class="m-0 text-center font-weight-bold">' +
+                                data.success +
+                                '</p>' +
+                                '</div>' +
+                                '</div>'
+                            );
+                            //DESELECT MAIN CHECKBOX
+                            $('#select-all-checkbox').prop('checked', false);
+
+                            //NOTIFICATION DISSAPEAR
+                            $('.notification-alert').delay(3000).fadeOut(500);
+                            //
+                        } else {
+                            alert('Algo ha salido mal. Por favor recarga la página e intenta nuevamente.')
+                        }
+
+                    }, error: function () {
+                        console.log('Error!');
+                    }
+                });
+            }
+        }
     });
 
     //****************************************** CHAT MESSAGES USER-TECH VIEW
