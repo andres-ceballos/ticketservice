@@ -11,13 +11,13 @@
                     <table class="table table-striped table-bordered table-responsive-sm">
                         <thead class="thead-dark">
                             <tr class="text-center">
-                                <th scope="col">#</th>
-                                <th scope="col">Nombres</th>
-                                <th scope="col">Apellidos</th>
-                                <th scope="col">Correo</th>
-                                <th scope="col">Ext. Teléfono</th>
-                                <th scope="col">Rol</th>
-                                <th colspan="2">
+                                <th class="align-middle" scope="col">#</th>
+                                <th class="align-middle" scope="col">Nombres</th>
+                                <th class="align-middle" scope="col">Apellidos</th>
+                                <th class="align-middle" scope="col">Correo</th>
+                                <th class="align-middle" scope="col">Ext. Teléfono</th>
+                                <th class="align-middle" scope="col">Rol</th>
+                                <th class="align-middle" colspan="2">
                                     <a href="{{route('admin.create')}}" class="btn btn-md btn-primary w-100">Crear usuario</a>
                                 </th>
                             </tr>
@@ -25,17 +25,17 @@
                         <tbody>
                             @foreach($users as $user)
                             <tr class="text-center">
-                                <th scope="row">{{ $user->id }}</th>
-                                <td>{{ $user->firstname }}</td>
-                                <td>{{ $user->lastname }}</td>
-                                <td>{{ $user->email }}</td>
-                                <td>{{ $user->phone_ext }}</td>
-                                <td>{{ $user->role_name }}</td>
-                                <td class="text-center">
+                                <th class="align-middle" scope="row">{{ $user->id }}</th>
+                                <td class="align-middle">{{ $user->firstname }}</td>
+                                <td class="align-middle">{{ $user->lastname }}</td>
+                                <td class="align-middle">{{ $user->email }}</td>
+                                <td class="align-middle">{{ $user->phone_ext }}</td>
+                                <td class="align-middle">{{ $user->role_name }}</td>
+                                <td class="align-middle" class="text-center">
                                     <a href="{{route('admin.edit', $user->id)}}" class="btn btn-md btn-primary btn-edit" data-toggle="modal" data-target="#edit-user" data-user="{{ json_encode($user) }}">Editar</a>
                                 </td>
-                                <td class="text-center">
-                                    <form action="{{route('admin.destroy', $user->id) }}" method="POST">
+                                <td class="align-middle" class="text-center">
+                                    <form onsubmit="return confirm('¿Estás seguro de querer eliminar el registro de {{$user->firstname}}?')" action="{{route('admin.destroy', $user->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                         <button class="btn btn-md btn-danger btn-delete">Eliminar</button>
@@ -45,6 +45,15 @@
                             @endforeach
                         </tbody>
                     </table>
+
+                    <nav>
+                        <ul class="pagination justify-content-end">
+                            <li>
+                                {{ $users->links('pagination::bootstrap-4') }}
+                            </li>
+                        </ul>
+                    </nav>
+
                     @include('users.admin.edit')
                 </div>
             </div>

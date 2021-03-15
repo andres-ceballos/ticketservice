@@ -18,20 +18,60 @@
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
+    <style>
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+    </style>
+
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 
 <body>
-    <div id="app">
+    <div id="app" class="main-container">
+        @if(\Session::has('success'))
+        <div class="container position-relative d-flex flex-row-reverse">
+            <div style="z-index: 1;" class="notification-alert alert alert-success position-absolute m-0 mt-1 col-md-4">
+                <p class="m-0 text-center font-weight-bold">
+                    {!! \Session::get('success') !!}
+                </p>
+            </div>
+        </div>
+        @elseif(\Session::has('error'))
+        <div class="container position-relative d-flex flex-row-reverse">
+            <div style="z-index: 1;" class="notification-alert alert alert-danger position-absolute m-0 mt-1 col-md-4">
+                <p class="m-0 text-center font-weight-bold">
+                    {!! \Session::get('error') !!}
+                </p>
+            </div>
+        </div>
+        @elseif ($errors->any())
+        <div class="container position-relative d-flex flex-row-reverse">
+            <div style="z-index: 1;" class="notification-alert alert alert-danger position-absolute m-0 mt-1 col-md-4">
+                <p class="m-0 text-center font-weight-bold">
+                    {{ __('Ingresa los datos solicitados para continuar') }}
+                </p>
+            </div>
+        </div>
+        @endif
+
         <nav class="navbar navbar-expand-md navbar-light bg-light shadow-sm">
             <div class="container">
                 <a class="navbar-brand font-weight-bold" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
                 </a>
+                @auth
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+                @endauth
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
@@ -65,10 +105,20 @@
             </div>
         </nav>
 
-        <main class="py-4">
+        <main class="main-content py-4">
             @yield('content')
         </main>
+
+        <div class="footer bg-dark py-4 text-white text-center">
+            <p class="m-0 font-weight-bold">
+                {!! __('Ticket Service. Todos los derechos reservados &copy;') !!}
+            </p>
+        </div>
     </div>
+    <script>
+        //URL TO UPDATE USER IN EDIT MODAL
+        var url_admin_update = '{{route("admin.update", ":id")}}';
+    </script>
 </body>
 
 </html>

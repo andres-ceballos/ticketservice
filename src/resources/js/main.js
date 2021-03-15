@@ -1,17 +1,26 @@
 $(document).ready(function () {
-    //DEFINE TYPE OF USER MESSAGING TO SHOW STYLES IN CHAT
-    var type_user_msg = 'RECEIVER';
-    //NOTIFICATION NUMBER WHEN NO EXISTS NEW MESSAGES FOR YET...
-    var notification_count = 1;
+
+    //****************************************** GLOBAL
+
+    //ALERT NOTIFICATIONS
+    if ($('.notification-alert').length) {
+        $('.notification-alert').delay(3000).fadeOut(500);
+    }
+
+    //****************************************** ADMIN PANEL
 
     //PUT DATA INTO MODAL EDIT USER
     $('#edit-user').on('show.bs.modal', function (e) {
         var modal = $(this);
+
+        //SAVE USER'S DATA SELECT FOR EDIT BUTTON IN VAR USER
         var user = $(e.relatedTarget).data('user');
 
-        var url = '{{route("admin.update", ":id")}}'
+        //TAKE VAR GLOBAL URL FROM APP.BLADE
+        var url = url_admin_update;
         url = url.replace(':id', user.id);
 
+        //PUT DATA IN MODAL EDIT USER
         modal.find('#form-edit-user').attr('action', url);
         modal.find('#firstname').val(user.firstname);
         modal.find('#lastname').val(user.lastname);
@@ -19,6 +28,13 @@ $(document).ready(function () {
         modal.find('#phone_ext').val(user.phone_ext);
         modal.find('#role_id').val(user.role_id);
     });
+
+    //****************************************** CHAT MESSAGES USER-TECH VIEW
+
+    //DEFINE TYPE OF USER MESSAGING TO SHOW STYLES IN CHAT
+    var type_user_msg = 'RECEIVER';
+    //NOTIFICATION NUMBER WHEN NO EXISTS NEW MESSAGES FOR YET...
+    var notification_count = 1;
 
     //SUBMIT MESSAGE CHAT
     $('#form-message').on('submit', function (e) {
@@ -30,6 +46,7 @@ $(document).ready(function () {
         //DATA FORM-MESSAGE
         var formData = $(this).serializeArray();
 
+        //CREATE DETAIL INCIDENT MESSAGES
         $.ajax({
             headers: { 'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content") },
             type: $(this).attr('method'),
@@ -62,7 +79,7 @@ $(document).ready(function () {
                     'message_counter': notification_count,
                 }
 
-                //UPDATE METHOD
+                //UPDATE DETAIL INCIDENT NOTIFICATIONS
                 $.ajax({
                     headers: { 'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content") },
                     type: "PUT",
@@ -86,7 +103,7 @@ $(document).ready(function () {
 
     //CHAT EVENT-WEBSOCKET FOR SHOW MESSAGE, DATETIME IN REALTIME WITH STYLES
     Echo.channel('chat').listen('NewMessage', (e) => {
-        
+
         //IF USER TECH OR USER NORMAL ACCESS TO CHAT.. RESET NEW MESSAGE COUNTER
         //AVAILABLE WHEN USER SENDER DON'T REFRESH DE PAGE
         if (e.message.reset_count == 1) {

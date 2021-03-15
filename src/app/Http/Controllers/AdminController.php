@@ -6,6 +6,7 @@ use App\Http\Requests\CreateUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -21,7 +22,7 @@ class AdminController extends Controller
             ->select(
                 'users.*',
                 'roles.role_name'
-            )->get();
+            )->paginate(5);
 
         return view('users.admin.index', compact('users'));
     }
@@ -45,10 +46,9 @@ class AdminController extends Controller
     public function store(CreateUserRequest $request)
     {
         $user = $request->validated();
-
         User::create($user);
 
-        return redirect()->to('/admin/create');
+        return redirect()->back()->with('success', 'Usuario registrado correctamente');
     }
 
     /**
@@ -80,13 +80,29 @@ class AdminController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(CreateUserRequest $request, $id)
     {
         $user = User::findOrFail($id);
 
-        $user->update($request->all());
+        //IF PASSWORD ADD IN FORM IS EQUALS TO PASSWORD IN DATABASE
+        if (Hash::check($request->password, $user->password)) {
+            return redirect()->back()->with('error', 'La contraseña es igual a la anterior.<br> Intenta de nuevo con una totalmente diferente.');
+            #
+            //IF FIELD PASSWORD WAS ADDED... UPDATE ALL
+        } else if ($request->filled('password')) {
+            $user->update($request->all());
 
-        return redirect('/admin');
+            return redirect()->back()->with('success', 'Todos los datos del usuario han sido actualizados.');
+            #
+            //IF FIELD PASSWORD WAS OMITTED... UPDATE ALL, EXCEPT PASSWORD
+        } else {
+            $user->update($request->except([
+                'password',
+                'password_confirmation'
+            ]));
+
+            return redirect()->back()->with('success', 'Datos de usuario actualizados correctamente.');
+        }
     }
 
     /**
@@ -98,9 +114,8 @@ class AdminController extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
-
         $user->delete();
 
-        return redirect('/admin');
+        return redirect()->back()->with('success', 'Usuario eliminado correctamente');
     }
 }

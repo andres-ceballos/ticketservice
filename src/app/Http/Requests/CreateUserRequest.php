@@ -27,15 +27,32 @@ class CreateUserRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'firstname' => 'required|string|between:1,255',
-            'lastname' => 'required|string|between:1,255',
-            'email' => 'required|string|between:1,255|unique:users,email',
-            'phone_ext' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|between:3,13',
-            'role_id' => 'required|in:1,2,3',
-            'password' => 'required|string|between:8,255|confirmed',
-            'password_confirmation' => 'required'
-        ];
+        switch ($this->method()) {
+            case 'PUT':
+                $id = $this->route('admin');
+
+                return [
+                    'firstname' => 'required|string|between:1,255',
+                    'lastname' => 'required|string|between:1,255',
+                    'email' => 'required|string|between:1,255|unique:users,email,' . $id,
+                    'phone_ext' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|between:3,13',
+                    'role_id' => 'required|in:1,2,3',
+                    'password' => 'confirmed',
+                ];
+                break;
+
+            default:
+                return [
+                    'firstname' => 'required|string|between:1,255',
+                    'lastname' => 'required|string|between:1,255',
+                    'email' => 'required|string|between:1,255|unique:users,email',
+                    'phone_ext' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|between:3,13',
+                    'role_id' => 'required|in:1,2,3',
+                    'password' => 'required|string|between:8,255|confirmed',
+                    'password_confirmation' => 'required'
+                ];
+                break;
+        }
     }
 
     public function messages()
