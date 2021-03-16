@@ -36,6 +36,11 @@
 
 <body>
     <div id="app" class="main-container">
+        @auth
+        @if(Auth::user()->isTech())
+        <span class="notification-new-incident"></span>
+        @endif
+        @endauth
         @if(\Session::has('success'))
         <div class="container position-relative d-flex flex-row-reverse">
             <div style="z-index: 1;" class="notification-alert alert alert-success position-absolute m-0 mt-1 col-md-4">
@@ -116,8 +121,13 @@
         </div>
     </div>
     <script>
-        //URL TO UPDATE USER IN EDIT MODAL
+        //URL TO UPDATE USER IN EDIT MODAL ADMIN PANEL
         var url_admin_update = '{{route("admin.update", ":id")}}';
+
+        //VARS AND URL TO UPDATE-ACCEPT INCIDENT IN INDEX TECH PANEL
+        var _token = '@csrf';
+        var method = '@method("PUT")';
+        var url_incident_update = '{{route("incident.update", ":id")}}';
     </script>
 </body>
 

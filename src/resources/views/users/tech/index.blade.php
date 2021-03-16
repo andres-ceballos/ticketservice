@@ -22,7 +22,8 @@
                                 <th class="align-middle" colspan="2">&nbsp;</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="table-body">
+                            <!--IF TBODY -->
                             @if(count($user_incidents))
                             @foreach($user_incidents as $user_incident)
                             <tr class="text-center">
@@ -38,6 +39,7 @@
                                     </div>
                                 </td>
                                 <td class="align-middle">{{ $user_incident->user_name }}</td>
+                                <!--IF FIELD ATTENDED--- -->
                                 @if ($user_incident->tech_id)
                                 <td class="align-middle">
                                     <p class="m-0">SI</p>
@@ -47,7 +49,9 @@
                                     <p class="m-0">NO</p>
                                 </td>
                                 @endif
+                                <!-- CLOSE FIELD ATTENDED -->
 
+                                <!-- IF FIELD STATUS -->
                                 @if ($user_incident->incident_status == 0)
                                 <td class="align-middle">
                                     <small>
@@ -61,7 +65,9 @@
                                 @endif
                                 <td class="align-middle">{{ $user_incident->service_rating}}</td>
                                 <td class="align-middle">{{ $user_incident->created_at }}</td>
+                                <!-- CLOSE FIELD STATUS -->
 
+                                <!-- IF TECH ATTENDED INCIDENT -->
                                 @if ($user_incident->tech_id)
                                 <td class="align-middle text-center">
                                     <a href="{{route('detail-incident.show', $user_incident->id)}}" class="btn btn-md btn-primary btn-edit w-100">Ver</a>
@@ -88,8 +94,10 @@
                                 </td>
                                 <td class="align-middle">&nbsp;</td>
                                 @endif
+                                <!-- CLOSE TECH ATTENDED INCIDENT -->
                             </tr>
                             @endforeach
+                            <!--ELSE TBODY -->
                             @else
                             <tr class="text-center">
                                 <td class="align-middle" colspan="12">No se han registrado incidencias.</td>

@@ -103,8 +103,65 @@ $(document).ready(function () {
         }
     });
 
-    //****************************************** CHAT MESSAGES USER-TECH VIEW
+    //****************************************** TECH PANEL
 
+    //CREATE INCIDENT-WEBSOCKET FOR BUILD AND SHOW NEW ROW TABLE INCIDENT IN TECH PANEL
+    Echo.channel('incident').listen('NewIncident', (e) => {
+        //console.log(e.incident);
+
+        var url = url_incident_update;
+        url = url.replace(':id', e.incident['detail_incident'].incident_id);
+
+        //NEW ROW TABLE STRUCTURE
+        $('.table-body').prepend(
+            ' <tr class="text-center">' +
+            '<td class="align-middle">' + e.incident['incident'].title + '</td>' +
+            '<td class="align-middle" style="min-width: 20rem; max-width: 20rem;">' +
+            '<div class="d-flex">' +
+            '<div id="message-user-' + e.incident['detail_incident'].incident_id + '" class="col-10 text-truncate">' +
+            e.incident['incident'].message_reply +
+            '</div>' +
+            '<span id="message-notification-' + e.incident['detail_incident'].incident_id + '" class="bg-primary mx-2 px-2 text-white rounded-pill">1</span>' +
+            '</div>' +
+            '</td>' +
+            '<td class="align-middle">' + e.incident['incident'].firstname + ' ' + e.incident['incident'].lastname + '</td>' +
+            '<td class="align-middle">' +
+            '<p class="m-0">NO</p>' +
+            '</td>' +
+            '<td class="align-middle">' +
+            '<small>' +
+            '<p class="m-0 bg-danger border border-danger py-1 px-1 rounded-lg ">SIN REALIZAR</p>' +
+            '</small>' +
+            '</td>' +
+            '<td class="align-middle">0</td>' +
+            '<td class="align-middle">' + e.incident['incident_created'] + '</td>' +
+            '<td class="align-middle">' +
+            '<form action="' + url + '" method="POST">' +
+            _token +
+            method +
+            '<input type="hidden" name="action" value="update_tech_id">' +
+            '<button class="btn btn-md btn-secondary">Aceptar</button>' +
+            '</form>' +
+            '</td>' +
+            '<td class="align-middle">&nbsp;</td>' +
+            '</tr>'
+        );
+
+        //ADD NOTIFICATION
+        $('.notification-new-incident').prepend(
+            '<div class="container position-relative d-flex flex-row-reverse">' +
+            '<div style="z-index: 1;" class="notification-alert alert alert-success position-absolute m-0 mt-1 col-md-4">' +
+            '<p class="m-0 text-center font-weight-bold">' +
+            'Nueva solicitud creada' +
+            '</p>' +
+            '</div>' +
+            '</div>'
+        );
+
+        $('.notification-alert').delay(3000).fadeOut(500);
+    });
+
+    //CHAT MESSAGES USER-TECH VIEW
     //DEFINE TYPE OF USER MESSAGING TO SHOW STYLES IN CHAT
     var type_user_msg = 'RECEIVER';
     //NOTIFICATION NUMBER WHEN NO EXISTS NEW MESSAGES FOR YET...

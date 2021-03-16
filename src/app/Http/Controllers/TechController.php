@@ -26,9 +26,8 @@ class TechController extends Controller
                 'detail_incidents.message_reply',
                 DB::raw('CONCAT(users.firstname, " ", users.lastname) as user_name')
             )->orderBy('detail_incidents.created_at', 'DESC')
-            ->get();
-
-        $user_incidents = $user_incidents->unique('incident_id');
+            ->get()
+            ->unique('incident_id');
 
         return view('users.tech.index', compact('user_incidents'));
     }

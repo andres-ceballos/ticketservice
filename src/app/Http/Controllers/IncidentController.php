@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewIncident;
 use App\Http\Requests\CreateIncidentRequest;
 use App\Models\DetailIncident;
 use App\Models\Incident;
@@ -38,26 +39,35 @@ class IncidentController extends Controller
      */
     public function store(CreateIncidentRequest $request)
     {
-        //SAVE INCIDENT WITH ADD ID USER CURRENT SESSION
-        $incident_req = $request->validated();
-        $incident_req['user_id'] = Auth::user()->id;
+        //CREATE INCIDENT WITH ID, NAME USER CURRENT SESSION
+        $incident = $request->validated();
+        $incident['user_id'] = Auth::user()->id;
+        $incident['firstname'] = Auth::user()->firstname;
+        $incident['lastname'] = Auth::user()->lastname;
+        $incident['notification_tech'] = 1;
 
-        $incident = new Incident();
-        $incident->title = $incident_req['title'];
-        $incident->user_id = $incident_req['user_id'];
-        $incident->save();
+        Incident::create($incident);
 
         //TAKE LAST ID INCIDENT REGISTER
         $last_incident = Incident::orderBy('id', 'DESC')->first();
 
-        //SAVE DETAIL INCIDENT WITH ID INCIDENT
-        $detail_incident = new DetailIncident();
-        $detail_incident->message_reply = $incident_req['message_reply'];
-        $detail_incident->from_user_id = $incident_req['user_id'];
-        $detail_incident->incident_id = $last_incident->id;
-        $detail_incident->save();
+        $detail_incident['message_reply'] = $incident['message_reply'];
+        $detail_incident['from_user_id'] = $incident['user_id'];
+        $detail_incident['incident_id'] = $last_incident->id;
 
-        return view('users.user.create');
+        //CREATE DETAIL INCIDENT WITH SOME LAST DATA
+        DetailIncident::create($detail_incident);
+
+        //EVENT DATA TO SEND AND SHOW DATA IN REAL TIME
+        $event_data = [
+            'incident' => $incident,
+            'incident_created' => $last_incident['created_at']->format('Y-m-d h:i:s'),
+            'detail_incident' => $detail_incident
+        ];
+
+        broadcast(new NewIncident($event_data));
+
+        return redirect()->back()->with('success', 'Solicitud creada correctamente');
     }
 
     /**
@@ -94,9 +104,8 @@ class IncidentController extends Controller
         //CONDITION FOR...
         //UPDATE ID TECH WHO TAKE INCIDENTS...
         if ($request->action == 'update_tech_id') {
-            $incident = Incident::findOrFail($id);
-            $tech_id = Auth::user()->id;
-            $incident->update(['tech_id' => $tech_id]);
+            Incident::where('id', $id)
+                ->update(['tech_id' => Auth::user()->id]);
 
             return redirect('detail-incident/' . $id);
             //
@@ -115,13 +124,13 @@ class IncidentController extends Controller
         } elseif ($request->action == 'update_notification') {
             //CONDITION WHAT DECIDES IF UPDATE IS FOR TECH NOTIFICATION COLUMN
             if ($request->type_user == 'Tech') {
-                Incident::where('id', $request->incident_id)
+                Incident::where('id', $id)
                     ->update(['notification_user' => $request->message_counter]);
                 return response()->json(['success' => 'Update User Not. Success', 200]);
                 //
                 //OR USER NOTIFICATION COLUMN
             } else if ($request->type_user == 'User') {
-                Incident::where('id', $request->incident_id)
+                Incident::where('id', $id)
                     ->update(['notification_tech' => $request->message_counter]);
                 return response()->json(['success' => 'Update Tech Not. Success'], 200);
             }
