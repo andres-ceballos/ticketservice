@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Events\NewIncident;
+use App\Events\NewTechAssigned;
 use App\Http\Requests\CreateIncidentRequest;
 use App\Models\DetailIncident;
 use App\Models\Incident;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -106,6 +108,15 @@ class IncidentController extends Controller
         if ($request->action == 'update_tech_id') {
             Incident::where('id', $id)
                 ->update(['tech_id' => Auth::user()->id]);
+
+            $tech = User::findOrFail(Auth::user()->id);
+
+            $event_data = [
+                'incident_id' => $id,
+                'tech_name' => $tech->firstname . ' ' . $tech->lastname
+            ];
+
+            broadcast(new NewTechAssigned($event_data));
 
             return redirect('detail-incident/' . $id);
             //

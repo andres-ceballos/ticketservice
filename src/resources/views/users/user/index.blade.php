@@ -39,7 +39,9 @@
                                         @endif
                                     </div>
                                 </td>
-                                <td class="align-middle">{{ $user_incident->tech_name }}</td>
+                                <td class="align-middle tech-assigned-{{$user_incident->id}}" style="min-width: 10rem; max-width: 10rem;">
+                                    {{ $user_incident->tech_name }}
+                                </td>
                                 <td class="align-middle">{{ $user_incident->service_rating}}</td>
                                 <td class="align-middle">{{ $user_incident->created_at }}</td>
                                 <td class="align-middle text-center">

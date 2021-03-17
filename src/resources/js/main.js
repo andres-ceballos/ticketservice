@@ -161,6 +161,22 @@ $(document).ready(function () {
         $('.notification-alert').delay(3000).fadeOut(500);
     });
 
+    //****************************************** USER PANEL
+
+    //CREATE INCIDENT-WEBSOCKET FOR SHOW NEW TECH NAME ASSIGNED FOR INCIDENT IN USER PANEL
+    Echo.channel('tech-assigned').listen('NewTechAssigned', (e) => {
+        //UNIQUE ROW AFFECTED TO ADD TECH NAME
+        tech_assigned_incident = '.tech-assigned-' + e.tech_assigned.incident_id;
+
+        //ADD TECH NAME AND PILL NEW NOTIFICATION
+        $(tech_assigned_incident).append(
+            e.tech_assigned.tech_name +
+            '<br><span class="bg-primary mx-2 px-2 text-white rounded-pill">' +
+            'Nuevo' +
+            '</span>'
+        );
+    });
+
     //CHAT MESSAGES USER-TECH VIEW
     //DEFINE TYPE OF USER MESSAGING TO SHOW STYLES IN CHAT
     var type_user_msg = 'RECEIVER';
