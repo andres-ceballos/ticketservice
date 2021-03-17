@@ -89,7 +89,7 @@
                                         @csrf
                                         @method('PUT')
                                         <input type="hidden" name="action" value="update_tech_id">
-                                        <button class="btn btn-md btn-secondary">Aceptar</button>
+                                        <button class="btn btn-md btn-secondary btn-accept-{{$user_incident->id}}">Aceptar</button>
                                     </form>
                                 </td>
                                 <td class="align-middle">&nbsp;</td>

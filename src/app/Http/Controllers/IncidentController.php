@@ -109,6 +109,10 @@ class IncidentController extends Controller
             Incident::where('id', $id)
                 ->update(['tech_id' => Auth::user()->id]);
 
+            //DELETE ROW ACCEPT FOR EVERYONE ELSE TECH
+            broadcast(new NewIncident(['action' => 'delete-row', 'incident_id' => $id]));
+
+            //FIRST AND LASTNAME OF TECH FOR NOTIFICATION USER PANEL
             $tech = User::findOrFail(Auth::user()->id);
 
             $event_data = [
@@ -116,6 +120,7 @@ class IncidentController extends Controller
                 'tech_name' => $tech->firstname . ' ' . $tech->lastname
             ];
 
+            //SEND TECH NAME FOR USER PANEL VIEW INDEX
             broadcast(new NewTechAssigned($event_data));
 
             return redirect('detail-incident/' . $id);
