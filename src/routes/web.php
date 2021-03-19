@@ -27,6 +27,7 @@ Route::delete('/deleteSelectUsers', [App\Http\Controllers\AdminController::class
 
 Route::resource('/tech', App\Http\Controllers\TechController::class)->middleware('istech');
 Route::resource('/user', App\Http\Controllers\UserController::class)->middleware('isuser');
+Route::resource('/service-rating', App\Http\Controllers\UserRatingController::class);
 
 Route::resource('/incident', App\Http\Controllers\IncidentController::class);
 Route::resource('/detail-incident', App\Http\Controllers\DetailIncidentController::class);

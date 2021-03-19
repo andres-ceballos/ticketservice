@@ -28,7 +28,7 @@
                             @foreach($user_incidents as $user_incident)
                             <tr class="text-center">
                                 <td class="align-middle">{{ $user_incident->title }}</td>
-                                <td class="align-middle" style="min-width: 20rem; max-width: 20rem;">
+                                <td class="align-middle" style="min-width: 18rem; max-width: 18rem;">
                                     <div class="d-flex">
                                         <div id="message-user-{{$user_incident->id}}" class="col-10 text-truncate">
                                             {{ $user_incident->message_reply }}
@@ -63,8 +63,24 @@
                                     <p class="m-0 bg-success border border-success py-2 px-1 rounded-lg ">HECHO</p>
                                 </td>
                                 @endif
-                                <td class="align-middle">{{ $user_incident->service_rating}}</td>
-                                <td class="align-middle">{{ $user_incident->created_at }}</td>
+                                <td class="align-middle" style="min-width: 7rem; max-width: 7rem;">
+                                    <div class="star-rating-{{$user_incident->id}}">
+                                        @if($user_incident->service_rating > 0)
+                                            @for($i = 1; $i <= 5; $i++) 
+                                                @if ($i <=$user_incident->service_rating)
+                                                    <i class="p-0 fa fa-star" style="color:orange"></i>
+                                                @else
+                                                    <i class="p-0 fa fa-star"></i>
+                                                @endif
+                                            @endfor
+                                        @else
+                                            {{ __('Sin calif.') }}
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="align-middle">
+                                    {{ \Carbon\Carbon::parse($user_incident->created_at)->format('d/M/Y') }}
+                                </td>
                                 <!-- CLOSE FIELD STATUS -->
 
                                 <!-- IF TECH ATTENDED INCIDENT -->
@@ -99,7 +115,7 @@
                             @endforeach
                             <!--ELSE TBODY -->
                             @else
-                            <tr class="text-center">
+                            <tr class="text-center no-registers-row">
                                 <td class="align-middle" colspan="12">No se han registrado incidencias.</td>
                             </tr>
                             @endif

@@ -42,8 +42,24 @@
                                 <td class="align-middle tech-assigned-{{$user_incident->id}}" style="min-width: 10rem; max-width: 10rem;">
                                     {{ $user_incident->tech_name }}
                                 </td>
-                                <td class="align-middle">{{ $user_incident->service_rating}}</td>
-                                <td class="align-middle">{{ $user_incident->created_at }}</td>
+                                <td class="align-middle" style="min-width: 7rem; max-width: 7rem;">
+                                    <div class="star-rating-{{$user_incident->id}}">
+                                        @if($user_incident->service_rating > 0)
+                                            @for($i = 1; $i <= 5; $i++) 
+                                                @if ($i <=$user_incident->service_rating)
+                                                    <i class="p-0 fa fa-star" style="color:orange"></i>
+                                                @else
+                                                    <i class="p-0 fa fa-star"></i>
+                                                @endif
+                                            @endfor
+                                        @else
+                                            {{ __('Sin calif.') }}
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="align-middle">
+                                    {{ \Carbon\Carbon::parse($user_incident->created_at)->format('d/M/Y') }}
+                                </td>
                                 <td class="align-middle text-center">
                                     <a href="{{route('detail-incident.show', $user_incident->id)}}" class="btn btn-md btn-primary btn-edit">Ver</a>
                                 </td>

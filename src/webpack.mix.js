@@ -17,4 +17,5 @@ mix.js([
 ], 'public/js/app.js')
     .vue()
     .sourceMaps()
-    .sass('resources/sass/app.scss', 'public/css');
+    .sass('resources/sass/app.scss', 'public/css')
+    .css('resources/css/main.css', 'public/css');;

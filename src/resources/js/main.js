@@ -119,6 +119,8 @@ $(document).ready(function () {
             var url = url_incident_update;
             url = url.replace(':id', e.incident['detail_incident'].incident_id);
 
+            $('.no-registers-row').remove();
+
             //NEW ROW TABLE STRUCTURE
             $('.table-body').prepend(
                 ' <tr class="text-center">' +
@@ -172,17 +174,64 @@ $(document).ready(function () {
     //****************************************** USER PANEL
 
     //CREATE INCIDENT-WEBSOCKET FOR SHOW NEW TECH NAME ASSIGNED FOR INCIDENT IN USER PANEL
-    Echo.channel('tech-assigned').listen('NewTechAssigned', (e) => {
-        //UNIQUE ROW AFFECTED TO ADD TECH NAME
-        tech_assigned_incident = '.tech-assigned-' + e.tech_assigned.incident_id;
+    Echo.channel('panel-notification').listen('NewPanelNotification', (e) => {
+        //console.log(e.panel_notification);
 
-        //ADD TECH NAME AND PILL NEW NOTIFICATION
-        $(tech_assigned_incident).append(
-            e.tech_assigned.tech_name +
-            '<br><span class="bg-primary mx-2 px-2 text-white rounded-pill">' +
-            'Nuevo' +
-            '</span>'
-        );
+        //SHOW NOTIFICATION NEW TECH ASSIGNED IN PANEL USER
+        if (e.panel_notification.panel == 'User') {
+            //UNIQUE ROW AFFECTED TO ADD TECH NAME
+            tech_assigned_incident = '.tech-assigned-' + e.panel_notification.incident_id;
+
+            //ADD TECH NAME AND PILL NEW NOTIFICATION
+            $(tech_assigned_incident).append(
+                e.panel_notification.tech_name +
+                '<br><span class="bg-primary mx-2 px-2 text-white rounded-pill">' +
+                'Nuevo' +
+                '</span>'
+            );
+
+            //SHOW NOTIFICATION NEW RATING IN PANEL TECH
+        } else if (e.panel_notification.panel == 'Tech') {
+            star_rating_incident = '.star-rating-' + e.panel_notification.incident_id;
+
+            //EMPTY DIV CONTAINER STARS
+            $(star_rating_incident).empty();
+
+            //PUT NEW CONTENT FOR STAR RATING
+            //COUNT OF STARS 1 TO 5
+            for (var i = 1; i <= 5; i++) {
+                //SHOW YELLOW STAR WHILE STAR RATING COMPLETE
+                if (i <= e.panel_notification.star_rating) {
+                    $(star_rating_incident).append(
+                        '<div class="d-inline-block star-rating">' +
+                        '<i class="fa fa-star" style="color:orange"></i>' +
+                        '</div>'
+                    );
+                    //WHEN THE STAR RATING NUMBER OF DATABASE HAS COMPLETE,
+                    //SHOW BLACK STARS FOR THE REST
+                } else {
+                    $(star_rating_incident).append(
+                        '<div class="d-inline-block star-rating">' +
+                        '<i class="fa fa-star"></i>' +
+                        '</div>'
+                    );
+                }
+
+                //APPLY MARGIN TO STAR ICON, EXCEPT THE LAST ONE 
+                $('.star-rating').css({ 'margin-right': '.25rem' });
+                $('.star-rating:last-of-type').css({ 'margin-right': '0' });
+            }
+        } else if (e.panel_notification.panel == 'User-Chat') {
+            close_request_incident = '.btn-message-' + e.panel_notification.incident_id;
+
+            //EMPTY DIV INPUT-BTN SEND MESSAGE CHAT USER
+            $(close_request_incident).empty();
+
+            //PUT MESSAGE CLOSE REQUEST
+            $(close_request_incident).append(
+                '<p>SOLICITUD CERRADA</p>'
+            );
+        }
     });
 
     //CHAT MESSAGES USER-TECH VIEW
@@ -265,9 +314,10 @@ $(document).ready(function () {
             notification_count = 1;
         } else {
             //console.log(e.message);
+            chat_message_incident = '.chat-message-' + e.message.incident_id + ':last';
             //SHOW NEW MESSAGES IN CHAT FOR USER WHO WRITE
             if (type_user_msg == 'SENDER') {
-                $(".chat-message:last").append(
+                $(chat_message_incident).append(
                     '<div class="d-block d-flex flex-row-reverse my-2">' +
                     '<div class="d-block order-2 bg-info w-50 rounded-lg px-3 py-3 pull-right">' +
                     '<p class="m-0">' + e.message.message_reply + '</p>' +
@@ -276,7 +326,7 @@ $(document).ready(function () {
                     '</div>');
                 //SHOW NEW MESSAGES IN CHAT FOR USER WHO READ
             } else {
-                $(".chat-message:last").append(
+                $(chat_message_incident).append(
                     '<div class="d-block">' +
                     '<div class="d-block order-1 bg-dark text-white w-50 rounded-lg px-3 py-3 my-2">' +
                     '<p class="m-0">' + e.message.message_reply + '</p>' +
@@ -343,5 +393,62 @@ $(document).ready(function () {
                 }
             }
         }
+    });
+
+    //*************************************************** SERVICE RATING
+    $('#form-service-rating').on('submit', function (e) {
+        e.preventDefault();
+
+        var formRating = $(this).serializeArray();
+
+        //TAKE ID INCIDENT FROM URL
+        incident_id = parseInt(window.location.pathname.split('/').pop());
+
+        // console.log(incident_id);
+
+        var radio_star_selected = [];
+
+        //SAVE ID RADIO SELECTED INTO ARRAY
+        $('.checkbox-star:checked').each(function () {
+            radio_star_selected.push($(this).attr('value'));
+        });
+
+        //IF ARRAY RADIO_STAR IS EMPTY SHOW ALERT
+        if (Array.isArray(radio_star_selected) && !radio_star_selected.length) {
+            alert('Por favor, selecciona una valoración entre 1 y 5 estrellas');
+            //ELSE... SEND DATA FOR PUT AJAX METHOD
+        } else {
+            $.ajax({
+                headers: { 'X-CSRF-TOKEN': $("meta[name='csrf-token']").attr("content") },
+                type: "PUT",
+                url: "/incident/" + incident_id,
+                data: formRating,
+                dataType: "json",
+                success: function (data) {
+                    //console.log(data);
+
+                    //ADD NOTIFICATION
+                    $('.main-container').prepend(
+                        '<div class="container position-relative d-flex flex-row-reverse">' +
+                        '<div style="z-index: 1;" class="notification-alert alert alert-success position-absolute m-0 mt-1 col-md-4">' +
+                        '<p class="m-0 text-center font-weight-bold">' +
+                        data.success +
+                        '</p>' +
+                        '</div>' +
+                        '</div>'
+                    );
+
+                    //NOTIFICATION DISSAPEAR
+                    $('.notification-alert').delay(3000).fadeOut(500);
+
+                    //RETURN TO HOME
+                    window.location.href = '/';
+
+                }, error: function () {
+                    console.log('Error!');
+                }
+            });
+        }
+
     });
 });

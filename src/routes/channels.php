@@ -21,10 +21,10 @@ Broadcast::channel('incident', function ($user) {
     return true;
 });
 
-Broadcast::channel('tech-assigned', function ($user) {
+Broadcast::channel('chat', function ($user) {
     return true;
 });
 
-Broadcast::channel('chat', function ($user) {
+Broadcast::channel('panel-notification', function ($user) {
     return true;
 });

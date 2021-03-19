@@ -45,10 +45,9 @@ class DetailIncidentController extends Controller
         //ADD ID WHO SEND MESSAGE
         $detail_incident['from_user_id'] = Auth::user()->id;
 
-        //METHOD TO TAKE ID INCIDENT
-        $url_complete = url()->previous();
-        $url_delete = 'http://localhost:8000/detail-incident/';
-        $incident_id = str_replace($url_delete, '', $url_complete);
+        //METHOD TO TAKE ID INCIDENT FROM URL
+        $url = url()->previous();
+        $incident_id = basename($url);
         $detail_incident['incident_id'] = (int) $incident_id;
 
         //CREATE DETAIL INCIDENT

@@ -17,25 +17,16 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
-
-    <style>
-        .main-container {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .main-content {
-            flex: 1;
-        }
-    </style>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
 
     <!-- Styles -->
+    <link href="{{ asset('css/main.css') }}" rel="stylesheet">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 
 <body>
     <div id="app" class="main-container">
+        <!-- NOTIFICATIONS -->
         @auth
         @if(Auth::user()->isTech())
         <span class="notification-new-incident"></span>
@@ -66,6 +57,7 @@
             </div>
         </div>
         @endif
+        <!-- END NOTIFICATIONS -->
 
         <nav class="navbar navbar-expand-md navbar-light bg-light shadow-sm">
             <div class="container">

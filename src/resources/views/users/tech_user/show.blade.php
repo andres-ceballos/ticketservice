@@ -10,30 +10,32 @@
                 <div style="height: 60vh;" class="card-body d-flex justify-content-center">
 
                     <div class="w-75 border p-3 rounded overflow-auto d-flex flex-column-reverse">
-                        <div class="chat-message flex-column">
+                        <div class="flex-column">
                             @foreach($details_incident as $detail_incident)
-                            @if(Auth::user()->id == $detail_incident->from_user_id)
-                            <div class="d-block d-flex flex-row-reverse my-2">
-                                <div class="d-block order-2 bg-info w-50 rounded-lg px-3 py-3 pull-right">
-                                    <p class="m-0">{{ $detail_incident->message_reply }}</p>
-                                    <small class="d-flex flex-row-reverse">{{$detail_incident->created_at}}</small>
+                            <div class="chat-message-{{$detail_incident->incident_id}}">
+                                @if(Auth::user()->id == $detail_incident->from_user_id)
+                                <div class="d-block d-flex flex-row-reverse my-2">
+                                    <div class="d-block order-2 bg-info w-50 rounded-lg px-3 py-3 pull-right">
+                                        <p class="m-0">{{ $detail_incident->message_reply }}</p>
+                                        <small class="d-flex flex-row-reverse">{{$detail_incident->created_at}}</small>
+                                    </div>
                                 </div>
-                            </div>
-                            @else
-                            <div class="d-block">
-                                <div class="d-block order-1 bg-dark text-white w-50 rounded-lg px-3 py-3 my-2">
-                                    <p class="m-0">{{ $detail_incident->message_reply }}</p>
-                                    <small class="d-flex flex-row-reverse">{{$detail_incident->created_at}}</small>
+                                @else
+                                <div class="d-block">
+                                    <div class="d-block order-1 bg-dark text-white w-50 rounded-lg px-3 py-3 my-2">
+                                        <p class="m-0">{{ $detail_incident->message_reply }}</p>
+                                        <small class="d-flex flex-row-reverse">{{$detail_incident->created_at}}</small>
+                                    </div>
                                 </div>
+                                @endif
                             </div>
-                            @endif
                             @endforeach
                         </div>
                     </div>
                 </div>
 
                 @if($detail_incident->incident_status == 0)
-                <div class="card-footer d-flex justify-content-center">
+                <div class="btn-message-{{$detail_incident->incident_id}} card-footer d-flex justify-content-center">
                     <form id="form-message" method="POST" action="{{route('detail-incident.store')}}" class="row w-75 d-flex justify-content-between">
                         @csrf
 
