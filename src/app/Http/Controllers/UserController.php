@@ -16,18 +16,22 @@ class UserController extends Controller
     public function index()
     {
         $user_incidents = DB::table('incidents')->orderBy('incidents.created_at', 'DESC')
-            ->join('detail_incidents', 'incidents.id', '=', 'detail_incidents.incident_id')
-            ->leftJoin('users', 'incidents.tech_id', '=', 'users.id')
-            ->where('incidents.user_id', "=", Auth::user()->id)
             ->select(
                 'incidents.*',
                 'detail_incidents.incident_id',
                 'detail_incidents.message_reply',
                 DB::raw('CONCAT(users.firstname, " ", users.lastname) as tech_name')
-            )->orderBy('detail_incidents.created_at', 'DESC')
-            ->get();
-
-        $user_incidents = $user_incidents->unique('incident_id');
+            )
+            //LAST DETAIL MESSAGE REPLY FROM INCIDENT
+            ->leftJoin('detail_incidents', function ($user_incidents) {
+                $user_incidents->on('detail_incidents.incident_id', '=', 'incidents.id')
+                    ->whereRaw('detail_incidents.id IN (SELECT MAX(DI.id) FROM detail_incidents AS DI
+                JOIN incidents as INC ON INC.id = DI.incident_id GROUP BY INC.id)');
+            })
+            ->leftJoin('users', 'incidents.tech_id', '=', 'users.id')
+            ->where('incidents.user_id', '=', Auth::user()->id)
+            ->groupBy('incident_id')
+            ->paginate(5);
 
         return view('users.user.index', compact('user_incidents'));
     }

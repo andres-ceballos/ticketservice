@@ -10,10 +10,10 @@
                 <div class="card-body">
 
                     <div class="mb-3">
-                        <a href="{{route('incident.create')}}" class="btn btn-md btn-primary w-25">Registrar incidencia</a>
+                        <a href="{{route('incident.create')}}" class="btn btn-md btn-primary">Registrar incidencia</a>
                     </div>
 
-                    <table class="table table-striped table-bordered table-responsive-sm">
+                    <table class="table table-striped table-bordered table-responsive-md">
                         <thead class="thead-dark">
                             <tr class="text-center">
                                 <th class="align-middle" scope="col">Titulo</th>
@@ -72,6 +72,16 @@
                             @endif
                         </tbody>
                     </table>
+
+                    <div class="pagination-content">
+                        <nav class="nav-pagination">
+                            <ul class="pagination">
+                                <li>
+                                    {{ $user_incidents->onEachSide(0)->links('pagination::bootstrap-4') }}
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </div>

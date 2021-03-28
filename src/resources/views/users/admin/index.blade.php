@@ -8,7 +8,7 @@
                 <div class="card-header text-center bg-light">{{ __('Listado de usuarios') }}</div>
 
                 <div class="card-body">
-                    <table class="table table-striped table-bordered table-responsive-sm">
+                    <table class="table table-striped table-bordered table-responsive-md">
                         <thead class="thead-dark">
                             <tr class="text-center">
                                 <th class="align-middle" scope="col">
@@ -52,15 +52,15 @@
                         </tbody>
                     </table>
 
-                    <div class="d-flex justify-content-between">
+                    <div class="pagination-content">
                         <div>
-                            <a href="#" class="btn btn-md btn-primary btn-all-delete" data-url="{{ url('deleteSelectUsers') }}">Eliminar seleccionados</a>
+                            <a href="#" class="d-block btn btn-md btn-primary btn-all-delete" data-url="{{ url('deleteSelectUsers') }}">Eliminar seleccionados</a>
                         </div>
 
-                        <nav>
-                            <ul class="pagination justify-content-end">
+                        <nav class="nav-pagination">
+                            <ul class="pagination">
                                 <li>
-                                    {{ $users->links('pagination::bootstrap-4') }}
+                                    {{ $users->onEachSide(0)->links('pagination::bootstrap-4') }}
                                 </li>
                             </ul>
                         </nav>

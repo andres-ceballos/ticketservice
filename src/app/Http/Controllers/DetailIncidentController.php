@@ -78,7 +78,7 @@ class DetailIncidentController extends Controller
         //DATA TO SEND FOR EVENT AND JSON METHOD
         $event_data = [
             'message_reply' => $last_detail_incident['message_reply'],
-            'created_at' => $last_detail_incident['created_at']->format('Y-m-d h:i:s'),
+            'created_at' => $last_detail_incident['created_at']->format('d/M/Y h:i a'),
             'incident_id' => $incident_id,
             'type_user' => $type_user,
             'notification_user' => $last_detail_incident->notification_user,
@@ -103,6 +103,7 @@ class DetailIncidentController extends Controller
             ->where('incident_id', $id)
             ->select(
                 'detail_incidents.*',
+                'incidents.title',
                 'incidents.incident_status',
                 'incidents.user_id',
                 'incidents.tech_id'

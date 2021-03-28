@@ -5,26 +5,32 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header text-center bg-light">{{ __('Conversación solicitud') }}</div>
+                <div class="card-header text-center bg-light">
+                    {{ __('Solicitud') }} {{$details_incident[0]->title}}
+                </div>
 
-                <div style="height: 60vh;" class="card-body d-flex justify-content-center">
+                <div style="height: 60vh;" class="card-body-messages card-body d-flex justify-content-center">
 
-                    <div class="w-75 border p-3 rounded overflow-auto d-flex flex-column-reverse">
+                    <div class="messages-container overflow-auto d-flex flex-column-reverse">
                         <div class="flex-column">
                             @foreach($details_incident as $detail_incident)
-                            <div class="chat-message-{{$detail_incident->incident_id}}">
+                            <div class="message-content chat-message-{{$detail_incident->incident_id}}">
                                 @if(Auth::user()->id == $detail_incident->from_user_id)
                                 <div class="d-block d-flex flex-row-reverse my-2">
                                     <div class="d-block order-2 bg-info w-50 rounded-lg px-3 py-3 pull-right">
                                         <p class="m-0">{{ $detail_incident->message_reply }}</p>
-                                        <small class="d-flex flex-row-reverse">{{$detail_incident->created_at}}</small>
+                                        <small class="d-flex flex-row-reverse text-muted font-weight-bold mt-2">
+                                            {{ \Carbon\Carbon::parse($detail_incident->created_at)->format('d/M/Y h:i a') }}
+                                        </small>
                                     </div>
                                 </div>
                                 @else
                                 <div class="d-block">
                                     <div class="d-block order-1 bg-dark text-white w-50 rounded-lg px-3 py-3 my-2">
                                         <p class="m-0">{{ $detail_incident->message_reply }}</p>
-                                        <small class="d-flex flex-row-reverse">{{$detail_incident->created_at}}</small>
+                                        <small class="d-flex flex-row-reverse text-muted font-weight-bold mt-2">
+                                            {{ \Carbon\Carbon::parse($detail_incident->created_at)->format('d/M/Y h:i a') }}
+                                        </small>
                                     </div>
                                 </div>
                                 @endif

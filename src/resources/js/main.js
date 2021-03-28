@@ -4,6 +4,7 @@ $(document).ready(function () {
     //ALERT NOTIFICATIONS
     if ($('.notification-alert').length) {
         $('.notification-alert').delay(3000).fadeOut(500);
+        $('.container-notification').delay(3500).fadeOut(500);
     }
 
     //****************************************** ADMIN PANEL
@@ -158,11 +159,17 @@ $(document).ready(function () {
 
             //ADD NOTIFICATION
             $('.notification-new-incident').prepend(
-                '<div class="container position-relative d-flex flex-row-reverse">' +
-                '<div style="z-index: 1;" class="notification-alert alert alert-success position-absolute m-0 mt-1 col-md-4">' +
+                '<div class="container container-notification">' +
+                '<div class="row justify-content-center">' +
+                '<div class="col-md-12">' +
+                '<div class="card">' +
+                '<div style="z-index: 1;" class="notification-alert alert alert-info position-absolute m-0 mt-1 col-md-4">' +
                 '<p class="m-0 text-center font-weight-bold">' +
-                'Nueva solicitud creada' +
+                'Nueva solicitud generada' +
                 '</p>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
                 '</div>' +
                 '</div>'
             );
@@ -321,7 +328,7 @@ $(document).ready(function () {
                     '<div class="d-block d-flex flex-row-reverse my-2">' +
                     '<div class="d-block order-2 bg-info w-50 rounded-lg px-3 py-3 pull-right">' +
                     '<p class="m-0">' + e.message.message_reply + '</p>' +
-                    ' <small class="d-flex flex-row-reverse">' + e.message.created_at + '</small>' +
+                    '<small class="d-flex flex-row-reverse text-muted font-weight-bold mt-2">' + e.message.created_at + '</small>' +
                     '</div>' +
                     '</div>');
                 //SHOW NEW MESSAGES IN CHAT FOR USER WHO READ
@@ -330,7 +337,7 @@ $(document).ready(function () {
                     '<div class="d-block">' +
                     '<div class="d-block order-1 bg-dark text-white w-50 rounded-lg px-3 py-3 my-2">' +
                     '<p class="m-0">' + e.message.message_reply + '</p>' +
-                    ' <small class="d-flex flex-row-reverse">' + e.message.created_at + '</small>' +
+                    '<small class="d-flex flex-row-reverse text-muted font-weight-bold mt-2">' + e.message.created_at + '</small>' +
                     '</div>' +
                     '</div>');
             }

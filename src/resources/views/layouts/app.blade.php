@@ -33,27 +33,45 @@
         @endif
         @endauth
         @if(\Session::has('success'))
-        <div class="container position-relative d-flex flex-row-reverse">
-            <div style="z-index: 1;" class="notification-alert alert alert-success position-absolute m-0 mt-1 col-md-4">
-                <p class="m-0 text-center font-weight-bold">
-                    {!! \Session::get('success') !!}
-                </p>
+        <div class="container container-notification">
+            <div class="row justify-content-center">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div style="z-index: 1;" class="notification-alert alert alert-success position-absolute m-0 mt-1 col-md-4">
+                            <p class="m-0 text-center font-weight-bold">
+                                {!! \Session::get('success') !!}
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         @elseif(\Session::has('error'))
-        <div class="container position-relative d-flex flex-row-reverse">
-            <div style="z-index: 1;" class="notification-alert alert alert-danger position-absolute m-0 mt-1 col-md-4">
-                <p class="m-0 text-center font-weight-bold">
-                    {!! \Session::get('error') !!}
-                </p>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div style="z-index: 1;" class="notification-alert alert alert-danger position-absolute m-0 mt-1 col-md-4">
+                            <p class="m-0 text-center font-weight-bold">
+                                {!! \Session::get('error') !!}
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         @elseif ($errors->any())
-        <div class="container position-relative d-flex flex-row-reverse">
-            <div style="z-index: 1;" class="notification-alert alert alert-danger position-absolute m-0 mt-1 col-md-4">
-                <p class="m-0 text-center font-weight-bold">
-                    {{ __('Ingresa los datos solicitados para continuar') }}
-                </p>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div style="z-index: 1;" class="notification-alert alert alert-danger position-absolute m-0 mt-1 col-md-4">
+                            <p class="m-0 text-center font-weight-bold">
+                                {{ __('Ingresa los datos solicitados para continuar') }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         @endif

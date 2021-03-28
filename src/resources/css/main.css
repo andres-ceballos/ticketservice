@@ -1,5 +1,4 @@
 /*LAYOUTS - APP*/
-
 .main-container {
     display: flex;
     flex-direction: column;
@@ -10,8 +9,69 @@
     flex: 1;
 }
 
-/*RATING STAR*/
+/*PAGINATION ADMIN PANEL */
+.pagination-content {
+    display: flex;
+    justify-content: space-between;
+}
 
+.pagination-content div {
+    margin-bottom: 0;
+}
+
+.nav-pagination ul {
+    justify-content: flex-end;
+}
+
+@media (max-width: 680px) {
+    .pagination-content {
+        display: block;
+    }
+
+    .pagination-content div {
+        margin-bottom: 20px;
+    }
+
+    .nav-pagination ul {
+        justify-content: center;
+    }
+}
+
+/* CHAT MESSAGES */
+.card-body-messages {
+    padding: 0;
+}
+
+.messages-container {
+    width: 75%;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 20px 0;
+}
+
+@media (max-width: 680px) {
+    .messages-container {
+        width: 100%;
+        border: none;
+        border-radius: 0;
+        margin: 10px 0;
+    }
+}
+
+.message-content div:last-child {
+    margin-bottom: 0 !important;
+}
+
+@media (max-width: 680px) {
+    .card-footer .btn {
+        display: block;
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+
+/*RATING STAR*/
 div.stars {
     width: 270px;
     display: inline-block;
