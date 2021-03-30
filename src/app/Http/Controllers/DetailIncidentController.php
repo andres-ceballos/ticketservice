@@ -8,7 +8,6 @@ use App\Models\DetailIncident;
 use App\Models\Incident;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class DetailIncidentController extends Controller
 {
@@ -40,6 +39,7 @@ class DetailIncidentController extends Controller
      */
     public function store(CreateDetailIncidentRequest $request)
     {
+        //AJAX REQUEST
         $detail_incident = $request->validated();
 
         //ADD ID WHO SEND MESSAGE

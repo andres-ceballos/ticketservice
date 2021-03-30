@@ -49,22 +49,22 @@ class UserRatingController extends Controller
     {
         $incident = Incident::findOrFail($id);
 
-        if ($incident->service_rating == 0) {
-            //IF USER ID OF INCIDENT CORRESPOND TO USER ACTUAL ...
-            if ($incident->user_id == Auth::user()->id) {
-                return view('rating.show');
-                //ELSE ... RETURN TO HOME
+        if (Auth::check()) {
+            if ($incident->service_rating == 0) {
+                //IF USER ID OF INCIDENT CORRESPOND TO USER ACTUAL ...
+                if ($incident->user_id == Auth::user()->id) {
+                    return view('rating.index');
+                    //ELSE ... RETURN TO HOME
+                } else {
+                    return redirect('/');
+                }
             } else {
-                return redirect('/');
+                //IF USER ID OF INCIDENT NOT CORRESPOND TO USER ACTUAL ...
+                //RETURN TO DASHBOARD
+                return redirect('/user')->with('success', 'La solicitud ya se ha valorado con anterioridad');
             }
         } else {
-            //IF INCIDENT WAS RATED AND USER HAS LOGIN, RETURN TO USER PANEL AND SHOW NOTIFICATION
-            if (Auth::check()) {
-                return redirect('/user')->with('success', 'La solicitud ya se ha valorado con anterioridad');
-                //ELSE ... RETURN TO HOME
-            } else {
-                return redirect('/')->with('success', 'La solicitud ya se ha valorado con anterioridad');
-            }
+            return redirect('/')->with('success', 'Debes iniciar sesión para valorar la solicitud');
         }
     }
 

@@ -6,7 +6,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header text-center bg-light">
-                    {{ __('Solicitud') }} {{$details_incident[0]->title}}
+                    {{ __('Solicitud - ') }} {{$details_incident[0]->title}}
                 </div>
 
                 <div style="height: 60vh;" class="card-body-messages card-body d-flex justify-content-center">
@@ -46,7 +46,7 @@
                         @csrf
 
                         <textarea name="message_reply" id="message_reply" cols="70" rows="1" style="resize: none;" placeholder="Escribe un mensaje"></textarea>
-                        <button type="submit" class="btn btn-primary">{{ __('Enviar mensaje') }} </button>
+                        <button type="submit" class="btn btn-primary btn-send-message">{{ __('Enviar mensaje') }} </button>
                     </form>
                 </div>
                 @else

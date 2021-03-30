@@ -63,8 +63,9 @@ class IncidentController extends Controller
 
         //EVENT DATA TO SEND AND SHOW DATA IN REAL TIME
         $event_data = [
+            'action' => 'NewIncidentRow-TechPanel',
             'incident' => $incident,
-            'incident_created' => $last_incident['created_at']->format('Y-m-d h:i:s'),
+            'incident_created' => $last_incident['created_at']->format('d/M/Y'),
             'detail_incident' => $detail_incident
         ];
 
@@ -111,13 +112,13 @@ class IncidentController extends Controller
                 ->update(['tech_id' => Auth::user()->id]);
 
             //DELETE ROW ACCEPT FOR EVERYONE ELSE TECH
-            broadcast(new NewIncident(['action' => 'delete-row', 'incident_id' => $id]));
+            broadcast(new NewIncident(['action' => 'DeleteIncidentRow-TechPanel', 'incident_id' => $id]));
 
             //FIRST AND LASTNAME OF TECH FOR NOTIFICATION USER PANEL
             $tech = User::findOrFail(Auth::user()->id);
 
             $event_data = [
-                'panel' => 'User',
+                'action' => 'ShowTechAssigned-UserPanel',
                 'incident_id' => $id,
                 'tech_name' => $tech->firstname . ' ' . $tech->lastname
             ];
@@ -136,24 +137,41 @@ class IncidentController extends Controller
                     'notification_tech' => null,
                 ]);
 
+            $event_data = [
+                'action' => 'RetireButtonSendMessage-UserPanel',
+                'incident_id' => $id,
+            ];
+
+            broadcast(new NewPanelNotification($event_data));
+
+            //DATA FOR SEND EMAIL RATING VALUE
             $detail_incident = DetailIncident::where('incident_id', $id)->firstOrFail();
             $incident = Incident::findOrFail($id);
             $user = User::findOrFail($incident->user_id);
 
             $username = $user->firstname . ' ' . $user->lastname;
 
-            $event_data = [
-                'panel' => 'User-Chat',
-                'incident_id' => $id,
-            ];
-
-            broadcast(new NewPanelNotification($event_data));
-
             $this->sendEmail($username, $user->email, $incident->id, $incident->title, $detail_incident->message_reply);
 
             return redirect()->back()->with('success', 'La solicitud ha sido cerrada');
             //
             ////OR ADD NEW VALUES FOR NOTIFICATION COLUMNS IN DATABASE
+        } elseif ($request->action == 'update_service_rating') {
+            Incident::where('id', $id)
+                ->update(['service_rating' => $request->star_rating]);
+
+            $event_data = [
+                'action' => 'ShowNewRating-TechPanel',
+                'incident_id' => $id,
+                'star_rating' => $request->star_rating,
+            ];
+
+            //SEND TECH NAME FOR USER PANEL VIEW INDEX
+            broadcast(new NewPanelNotification($event_data));
+
+            return response()->json(['success' => 'Valoración del servicio enviada.'], 200);
+            //
+            //AJAX REQUEST
         } elseif ($request->action == 'update_notification') {
             //CONDITION WHAT DECIDES IF UPDATE IS FOR TECH NOTIFICATION COLUMN
             if ($request->type_user == 'Tech') {
@@ -167,20 +185,6 @@ class IncidentController extends Controller
                     ->update(['notification_tech' => $request->message_counter]);
                 return response()->json(['success' => 'Update Tech Not. Success'], 200);
             }
-        } elseif ($request->action == 'update_service_rating') {
-            Incident::where('id', $id)
-                ->update(['service_rating' => $request->star_rating]);
-
-            $event_data = [
-                'panel' => 'Tech',
-                'incident_id' => $id,
-                'star_rating' => $request->star_rating,
-            ];
-
-            //SEND TECH NAME FOR USER PANEL VIEW INDEX
-            broadcast(new NewPanelNotification($event_data));
-
-            return response()->json(['success' => 'Valoración del servicio enviada.'], 200);
         }
     }
 

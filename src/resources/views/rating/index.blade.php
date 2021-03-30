@@ -8,7 +8,7 @@
                 <div class="card-header text-center bg-light">{{ __('Calificación del servicio') }}</div>
 
                 <div class="card-body d-flex justify-content-center">
-                    <div class="w-75 border p-5 mb-3 rounded text-center">
+                    <div class="border px-3 py-5 mb-3 rounded text-center">
                         <div class="stars">
                             <form id="form-service-rating" action="">
                                 <input class="checkbox-star star star-5" id="star-5" type="radio" name="star_rating" value="5" />
@@ -29,7 +29,7 @@
                 <!--.card-body-->
 
                 <div class="card-footer text-center">
-                    <button type="submit" class="w-25 btn btn-md btn-primary btn-rating" form="form-service-rating">Enviar calificación</button>
+                    <button type="submit" class="btn btn-md btn-primary btn-rating" form="form-service-rating">Enviar calificación</button>
                 </div>
                 <!--.card-footer-->
             </div>

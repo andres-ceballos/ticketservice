@@ -106,17 +106,11 @@ $(document).ready(function () {
 
     //****************************************** TECH PANEL
 
-    //CREATE INCIDENT-WEBSOCKET FOR REMOVE OR
-    //BUILD AND SHOW NEW ROW TABLE INCIDENT IN TECH PANEL
+    //INCIDENT CONTROLLER STORE - UPDATE
     Echo.channel('incident').listen('NewIncident', (e) => {
-        if (e.incident.action == 'delete-row') {
-            //console.log(e.incident);
 
-            //REMOVE ROW WHEN ACCEPT INCIDENT FOR EVERYONE ELSE IN PANEL TECH TABLE
-            delete_row_incident = '.btn-accept-' + e.incident.incident_id;
-            $(delete_row_incident).parents('tr').remove();
-
-        } else {
+        //WHEN A USER CREATE INCIDENT, THIS WILL BE DISPLAY IN TECH PANEL
+        if (e.incident.action == 'NewIncidentRow-TechPanel') {
             var url = url_incident_update;
             url = url.replace(':id', e.incident['detail_incident'].incident_id);
 
@@ -150,7 +144,7 @@ $(document).ready(function () {
                 _token +
                 method +
                 '<input type="hidden" name="action" value="update_tech_id">' +
-                '<button class="btn btn-md btn-secondary">Aceptar</button>' +
+                '<button class="btn btn-md btn-secondary btn-accept-' + e.incident['detail_incident'].incident_id + '">Aceptar</button>' +
                 '</form>' +
                 '</td>' +
                 '<td class="align-middle">&nbsp;</td>' +
@@ -175,17 +169,23 @@ $(document).ready(function () {
             );
 
             $('.notification-alert').delay(3000).fadeOut(500);
+            //
+        } else if (e.incident.action == 'DeleteIncidentRow-TechPanel') {
+            //console.log(e.incident);
+
+            //WHEN TECH ACCEPT INCIDENT, REMOVE ROW FOR EVERYONE ELSE TECH'S
+            delete_row_incident = '.btn-accept-' + e.incident.incident_id;
+            $(delete_row_incident).parents('tr').remove();
         }
     });
 
-    //****************************************** USER PANEL
-
-    //CREATE INCIDENT-WEBSOCKET FOR SHOW NEW TECH NAME ASSIGNED FOR INCIDENT IN USER PANEL
+    //****************************************** TECH - USER PANEL
+    //INCIDENT CONTROLLER UPDATE
     Echo.channel('panel-notification').listen('NewPanelNotification', (e) => {
         //console.log(e.panel_notification);
 
         //SHOW NOTIFICATION NEW TECH ASSIGNED IN PANEL USER
-        if (e.panel_notification.panel == 'User') {
+        if (e.panel_notification.action == 'ShowTechAssigned-UserPanel') {
             //UNIQUE ROW AFFECTED TO ADD TECH NAME
             tech_assigned_incident = '.tech-assigned-' + e.panel_notification.incident_id;
 
@@ -197,8 +197,20 @@ $(document).ready(function () {
                 '</span>'
             );
 
+            //WHEN A TECH CLOSE INCIDENT, THE USER CAN'T SEND NEW MESSAGES
+        } else if (e.panel_notification.action == 'RetireButtonSendMessage-UserPanel') {
+            close_request_incident = '.btn-message-' + e.panel_notification.incident_id;
+
+            //EMPTY DIV INPUT-BTN SEND MESSAGE CHAT USER
+            $(close_request_incident).empty();
+
+            //PUT MESSAGE CLOSE REQUEST
+            $(close_request_incident).append(
+                '<p>SOLICITUD CERRADA</p>'
+            );
+
             //SHOW NOTIFICATION NEW RATING IN PANEL TECH
-        } else if (e.panel_notification.panel == 'Tech') {
+        } else if (e.panel_notification.action == 'ShowNewRating-TechPanel') {
             star_rating_incident = '.star-rating-' + e.panel_notification.incident_id;
 
             //EMPTY DIV CONTAINER STARS
@@ -228,22 +240,18 @@ $(document).ready(function () {
                 $('.star-rating').css({ 'margin-right': '.25rem' });
                 $('.star-rating:last-of-type').css({ 'margin-right': '0' });
             }
-        } else if (e.panel_notification.panel == 'User-Chat') {
-            close_request_incident = '.btn-message-' + e.panel_notification.incident_id;
-
-            //EMPTY DIV INPUT-BTN SEND MESSAGE CHAT USER
-            $(close_request_incident).empty();
-
-            //PUT MESSAGE CLOSE REQUEST
-            $(close_request_incident).append(
-                '<p>SOLICITUD CERRADA</p>'
-            );
         }
     });
 
-    //CHAT MESSAGES USER-TECH VIEW
-    //DEFINE TYPE OF USER MESSAGING TO SHOW STYLES IN CHAT
-    var type_user_msg = 'RECEIVER';
+    //WHEN USERS PRESS ENTER IN FORM MESSAGE
+    $('#form-message').on('keyup', function (e) {
+        if (e.key == 'Enter') {
+            $('#form-message').submit();
+        }
+    });
+
+    //DEFINE TYPE OF USER
+    var type_user_msg = '';
     //NOTIFICATION NUMBER WHEN NO EXISTS NEW MESSAGES FOR YET...
     var notification_count = 1;
 
@@ -266,6 +274,7 @@ $(document).ready(function () {
             dataType: "json",
             success: function (data) {
                 //console.log(data);
+                //VAR DATA FROM DETAIL INCIDENT CONTROLLER - STORE
 
                 //EMPTY INPUT MESSAGES CHAT
                 $('#message_reply').val('');
@@ -312,7 +321,7 @@ $(document).ready(function () {
         });
     });
 
-    //CHAT EVENT-WEBSOCKET FOR SHOW MESSAGE, DATETIME IN REALTIME WITH STYLES
+    //DETAIL INCIDENT CONTROLLER STORE - SHOW
     Echo.channel('chat').listen('NewMessage', (e) => {
 
         //IF USER TECH OR USER NORMAL ACCESS TO CHAT.. RESET NEW MESSAGE COUNTER
@@ -341,14 +350,15 @@ $(document).ready(function () {
                     '</div>' +
                     '</div>');
             }
+
+            //SHOW NEW MESSAGE AND NOTIFICATION IN INDEX TECH - USER
+
             //DEFINE THE ROW WHERE THE MESSAGE NOTIFICATION (SPAN) WILL BE SHOWN
             message_notification_incident = '#message-notification-' + e.message.incident_id;
             //VAR FOR CREATE .AFTER SPAN ID
             message_notification_html = 'message-notification-' + e.message.incident_id;
-            //
-            //SHOW NEW MESSAGES AND NOTIFICATION IN INDEX FOR TECHS AND USERS
-            //IF USER IS TECH... MODIFY INDEX USER
-            //console.log(e.message.type_user);
+
+            //IF USER IS TECH... MODIFY PANEL USER PANEL MESSAGE
             if (e.message.type_user == 'Tech') {
                 //DEFINE THE ROW WHERE THE NEW MESSAGE WILL BE SHOWN
                 message_tech_incident = '#message-tech-' + e.message.incident_id;
@@ -373,7 +383,7 @@ $(document).ready(function () {
                         '<span id="' + message_notification_html + '" class="bg-primary mx-2 px-2 text-white rounded-pill">' + notification_count + '</span>'
                     );
                 }
-                //IF USER IS NORMAL USER... MODIFY INDEX TECH
+                //IF USER IS NORMAL USER... MODIFY PANEL TECH PANEL MESSAGE
             } else if (e.message.type_user == 'User') {
                 //DEFINE THE ROW WHERE THE NEW MESSAGE WILL BE SHOWN
                 message_user_incident = '#message-user-' + e.message.incident_id;
@@ -456,6 +466,5 @@ $(document).ready(function () {
                 }
             });
         }
-
     });
 });

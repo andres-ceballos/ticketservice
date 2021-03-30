@@ -15,7 +15,6 @@
                                 <th class="align-middle" scope="col">Titulo</th>
                                 <th class="align-middle" scope="col">Último mensaje</th>
                                 <th class="align-middle" scope="col">Usuario</th>
-                                <th class="align-middle" scope="col">Atendido</th>
                                 <th class="align-middle" scope="col">Estado</th>
                                 <th class="align-middle" scope="col">Calif. servicio</th>
                                 <th class="align-middle" scope="col">Fecha creación</th>
@@ -39,17 +38,6 @@
                                     </div>
                                 </td>
                                 <td class="align-middle">{{ $user_incident->user_name }}</td>
-                                <!--IF FIELD ATTENDED--- -->
-                                @if ($user_incident->tech_id)
-                                <td class="align-middle">
-                                    <p class="m-0">SI</p>
-                                </td>
-                                @else
-                                <td class="align-middle">
-                                    <p class="m-0">NO</p>
-                                </td>
-                                @endif
-                                <!-- CLOSE FIELD ATTENDED -->
 
                                 <!-- IF FIELD STATUS -->
                                 @if ($user_incident->incident_status == 0)
@@ -60,7 +48,9 @@
                                 </td>
                                 @else
                                 <td class="align-middle">
-                                    <p class="m-0 bg-success border border-success py-2 px-1 rounded-lg ">HECHO</p>
+                                    <small>
+                                        <p class="m-0 bg-success border border-success py-1 px-1 rounded-lg ">HECHO</p>
+                                    </small>
                                 </td>
                                 @endif
                                 <td class="align-middle" style="min-width: 7rem; max-width: 7rem;">
@@ -91,7 +81,7 @@
 
                                 <td class="align-middle">
                                     @if ($user_incident->incident_status == 0)
-                                    <form action="{{route('incident.update', $user_incident->id)}}" method="POST">
+                                    <form onsubmit="return confirm('¿Estás seguro de querer cerrar la solicitud de {{$user_incident->user_name}}?')" action="{{route('incident.update', $user_incident->id)}}" method="POST">
                                         @csrf
                                         @method('PUT')
                                         <input type="hidden" name="action" value="update_incident_status">
